@@ -30,6 +30,8 @@ Una vez clonado el repositorio en local, instalar las dependencias con el comand
 
 ## Guía de uso <a name="uso"></a>
 
+Se ejecutará la aplicación mediante `node index.js`.
+
 Al ejecutar la aplicación se preguntará sobre el número de expediente al que estará asignada la liquidación.  
 
 Tras ello, se preguntará la cantidad de cálculos a realizar (no puede exceder de 13).
