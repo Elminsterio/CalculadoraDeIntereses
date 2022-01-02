@@ -1,13 +1,11 @@
 
-const calcularInteresA = require('./modules/calculadoraLegal');
+const calcularInteresA = require('./modulos/calculadoraLegal');
 
 
 function toHTML(fechaIni, FechaFin, cantidad, tipoInt, titulo) {
 
     let arrCalculados = calcularInteresA(fechaIni, FechaFin, cantidad, tipoInt);
     let tableTotalStr = '';
-
-    let encabezado = '<table> </table>'
 
     tableTotalStr += '<tr>';
 

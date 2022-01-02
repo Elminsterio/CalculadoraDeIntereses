@@ -5,7 +5,7 @@ const path = require('path');
 const readline = require('readline');
 
 const HTMLFinalContent = require('./patternLiquidacion.js');
-const generarEscrito = require('./modules/escritos.js');
+const generarEscrito = require('./modulos/escritos.js');
 
 const rl = readline.createInterface(
   process.stdin,
@@ -159,19 +159,19 @@ async function executionInt() {
 executionInt()
   .then(async (result) => {
 
-if (!fs.existsSync(path.resolve(__dirname, `./expedientes`))) {
+if (!fs.existsSync(path.join(__dirname, `./expedientes`))) {
       
-  fs.mkdirSync(path.resolve(__dirname, `./expedientes`));
+  fs.mkdirSync(path.join(__dirname, `./expedientes`));
 
 }
 
-  if (!fs.existsSync(path.resolve(__dirname, `./expedientes/${expediente}`))) {
+  if (!fs.existsSync(path.join(__dirname, `./expedientes/${expediente}`))) {
       
-    fs.mkdirSync(path.resolve(__dirname, `./expedientes/${expediente}`));
+    fs.mkdirSync(path.join(__dirname, `./expedientes/${expediente}`));
   
   }
   
-  fs.writeFileSync(path.resolve(__dirname + `/expedientes/${expediente}/${expediente} - ANEXO 1.docx`), result); 
+  fs.writeFileSync(path.join(__dirname + `/expedientes/${expediente}/${expediente} - ANEXO 1.docx`), result); 
 
   console.log(`${expediente} - ANEXO 1.docx se ha guardado con éxito`);
 

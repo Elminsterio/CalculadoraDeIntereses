@@ -8,8 +8,8 @@ const calcularInteresA = require('./calculadoraLegal.js');
 // The error object contains additional information when logged with JSON.stringify (it contains a properties object containing all suberrors).
 function replaceErrors(key, value) {
     if (value instanceof Error) {
-        return Object.getOwnPropertyNames(value).reduce(function(error, key) {
-            error[key] = value[key];
+        return Object.getOwnPropertyNames(value).reduce(function(error, key2) {
+            error[key2] = value[key];
             return error;
         }, {});
     }
@@ -22,8 +22,8 @@ function errorHandler(error) {
     console.log(JSON.stringify({error: error}, replaceErrors));
 
     if (error.properties && error.properties.errors instanceof Array) {
-        const errorMessages = error.properties.errors.map(function (error) {
-            return error.properties.explanation;
+        const errorMessages = error.properties.errors.map(function (error2) {
+            return error2.properties.explanation;
         }).join("\n");
         console.log('errorMessages', errorMessages);
         // errorMessages is a humanly readable message looking like this:
@@ -93,7 +93,7 @@ function generarEscrito(fechaIniArr, FechaFinArr, cantidadArr, tipoIntArr, titul
                 .generate({type: 'nodebuffer'});
 
     // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
-    fs.writeFileSync(path.resolve(process.cwd() + `/expedientes/${expediente}`, `${expediente} - LIQUIDACIÓN DE INTERESES.docx`), buf);
+    fs.writeFileSync(path.join(process.cwd() + `/expedientes/${expediente}`, `${expediente} - LIQUIDACIÓN DE INTERESES.docx`), buf);
 };
 
 module.exports = generarEscrito;

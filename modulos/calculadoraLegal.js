@@ -40,8 +40,8 @@ let calcularInteresA = (fechaIni, fechaFin, cantidad, tipo) => {
     let fechaIniEnArr = fechaIni.includes('/') ? fechaIni.split('/') : fechaIni.split('-');
     let fechaFinEnArr = fechaFin.includes('/') ? fechaFin.split('/') : fechaFin.split('-');
 
-    fechaIniOnDate = new Date(fechaIniEnArr[2], fechaIniEnArr[1] - 1, fechaIniEnArr[0]);
-    fechaFinOnDate = new Date(fechaFinEnArr[2], fechaFinEnArr[1] - 1, fechaFinEnArr[0]);
+    let fechaIniOnDate = new Date(fechaIniEnArr[2], fechaIniEnArr[1] - 1, fechaIniEnArr[0]);
+    let fechaFinOnDate = new Date(fechaFinEnArr[2], fechaFinEnArr[1] - 1, fechaFinEnArr[0]);
 
     switch(tipo) {
 
