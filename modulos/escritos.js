@@ -41,7 +41,7 @@ function calculoTotalExpediente(fechaIniArr, FechaFinArr, cantidadArr, tipoIntAr
 
         let calculos = calcularInteresA(fechaIniArr[i], FechaFinArr[i], cantidadArr[i], tipoIntArr[i], tituloArr[i]);
 
-        cantTotal += calculos[calculos.length - 1][0];
+        if(tipoIntArr[i] !== 'mora' || tipoIntArr.length === 1) cantTotal += calculos[calculos.length - 1][0];
         intTotal += Number(calculos[calculos.length - 1][1]);
 
     }
@@ -53,7 +53,7 @@ function calculoTotalExpediente(fechaIniArr, FechaFinArr, cantidadArr, tipoIntAr
 function generarEscrito(fechaIniArr, FechaFinArr, cantidadArr, tipoIntArr, tituloArr, expediente) {
     // Load the docx file as binary content
     let content = fs
-        .readFileSync(path.resolve(__dirname, '../assets/Intereses.docx'), 'binary');
+        .readFileSync(path.join(__dirname, '../assets/Intereses.docx'), 'binary');
 
     let zip = new PizZip(content);
     let doc;

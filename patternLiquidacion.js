@@ -21,7 +21,7 @@ function toHTML(fechaIni, FechaFin, cantidad, tipoInt, titulo) {
 
         tableTotalStr += '<tr>';
 
-        let tableStr = `<td>${arrCalculados[i][1]}</td>\
+            tableStr = `<td>${arrCalculados[i][1]}</td>\
                         <td>${arrCalculados[i][2]}</td>\
                         <td>${arrCalculados[i][3]}</td>\
                         <td>${arrCalculados[i][4]}</td>\ `
@@ -47,7 +47,7 @@ function toHTML(fechaIni, FechaFin, cantidad, tipoInt, titulo) {
 
     return tableTotalStr;
 
-};
+}
 
 function HTMLFinalContent(fechaIniArr, FechaFinArr, cantidadArr, tipoIntArr, tituloArr) {
 
@@ -63,6 +63,6 @@ function HTMLFinalContent(fechaIniArr, FechaFinArr, cantidadArr, tipoIntArr, tit
 
     return content;
 
-};
+}
 
 module.exports = HTMLFinalContent;

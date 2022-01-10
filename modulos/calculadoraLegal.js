@@ -1,5 +1,6 @@
 const interesLegal = [
 
+    [new Date(2022,0,1), 3.00],
     [new Date(2021,0,1), 3.00],
     [new Date(2020,0,1), 3.00],
     [new Date(2019,0,1), 3.00],
@@ -34,7 +35,6 @@ const interesLegal = [
 
 ];
 
-
 let calcularInteresA = (fechaIni, fechaFin, cantidad, tipo) => {
 
     let fechaIniEnArr = fechaIni.includes('/') ? fechaIni.split('/') : fechaIni.split('-');
@@ -62,7 +62,7 @@ let calcularInteresLegales = (fechaIni, fechaFin, cantidad, diferencial = 0) => 
 
     cantidad = Number(cantidad);
     let meses = calculadoraMeses(fechaIni, fechaFin);
-    console.log(meses);
+
     let anioInicio = fechaIni.getFullYear();
     let mesInicio = fechaIni.getMonth();
 
@@ -73,13 +73,13 @@ let calcularInteresLegales = (fechaIni, fechaFin, cantidad, diferencial = 0) => 
     let diasAnio = 0;
     let intTotal = 0;
     let tipoAnual = calcularTipo(anioInicio, mesInicio, interesLegal)[1] + diferencial;
-    console.log(tipoAnual);
+
     let fechaBaseFormateado = `${fechaIni.getDate()}/${fechaIni.getMonth() + 1}/${fechaIni.getFullYear()}`;
 
     for(let i = 0; i < meses; i++) {
 
         let dias = i == meses - 1 ? fechaFin.getDate() : fechaSiguiente.getDate() - (fechaIni.getDate() - 1);
-        console.log(anioInicio,mesInicio);
+
         // Pendiente de establecer el tipo aplicable
         const arrTipoFecha = calcularTipo(anioInicio, mesInicio, interesLegal)
         const tipoAnualAplic = arrTipoFecha[1] + diferencial;
@@ -153,7 +153,7 @@ let calcularInteresLegales = (fechaIni, fechaFin, cantidad, diferencial = 0) => 
                 tipoAnual = calcularTipo(anioInicio, mesInicio + 1, interesLegal)[1] + diferencial;
             }
             
-    };
+    }
     
     for(let i = 0; i < calculo.length; i++) {
 
@@ -163,7 +163,7 @@ let calcularInteresLegales = (fechaIni, fechaFin, cantidad, diferencial = 0) => 
 
     calculo.push([cantidad, intTotal.toFixed(2), (cantidad + intTotal).toFixed(2), calculo[0][1], calculo[calculo.length - 1][2]]);
 
-    console.log(calculo);
+
     return calculo;
 
 }
@@ -190,7 +190,6 @@ let calculadoraMeses = (fecha1, fecha2) => {
 
     let mesesAniosEnteros = (fecha2.getFullYear() - (fecha1.getFullYear() + 1)) * 12;
 
-    console.log(mesesAniosEnteros, mesesTranscurridos1)
 
     return mesesAniosEnteros + mesesTranscurridos1 + mesAnio2;
 
@@ -198,10 +197,10 @@ let calculadoraMeses = (fecha1, fecha2) => {
 
 let calcularTipo = (anio, mes, arr) => {
     
-    console.log(anio)
+
 
     let nArr = arr.filter(e => e[0].getFullYear() == anio);
-    console.log(nArr);
+
     if(nArr.length === 1) {
 
         return nArr[0];
