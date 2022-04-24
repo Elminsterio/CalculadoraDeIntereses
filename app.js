@@ -12,192 +12,163 @@ const rl = readline.createInterface(
   process.stdout
 );
 
+const question = (str) => new Promise(resolve => rl.question(str, resolve));
 
-let fechasIniciales = [];
-let fechasFinales = [];
-let cantidades = [];
-let tipos = [];
-let titulos = [];
-let expediente = '';
-let calculo = 0;
-
-const question = (frase) => {
-
-    return new Promise((resolve) => {
-
-      rl.question(`${frase} `, (resp) => {
-
-        resolve(resp);
-
-    })
-  })
-}
-
-
-async function ejecutorPregunta(frase, fraseFail, tipo, variable = '') {
+async function ejecutorPregunta(tipo, frase, fraseFail='') {
 
   let response = await question(frase);
+  let condition;
+  // La función ha de retornar los valores una vez tratados por el filtro.
+  // ejecutar la pregunta de fallo en cada iteración en la que no se cumpla
+  // la condición.
+
+  // Evitar recursividad.
 
   switch(tipo) {
 
     case 'fecha':
-
-      if(/(?:3[01]|[12][0-9]|0?[1-9])([\/])(0?[1-9]|1[0-2])\1\d{4}$/.test(response)) {
-
-        variable.push(response);
-    
-       } else {
-    
-        await ejecutorPregunta(fraseFail, fraseFail, tipo, variable);
-    
-      }
-    
+    // crear una variable que almacene la condición y tras el switch, hacer un if con la condicion.
+      condition = /(?:3[01]|[12][0-9]|0?[1-9])([\/])(0?[1-9]|1[0-2])\1\d{4}$/.test(response);
       break;
-
     case 'cantidadArr':
-
-      response = response.replace(/,/g, '.')
-
-      if(!isNaN(response) && Number(response) > 0) {
-
-        variable.push(response);
-    
-       } else {
-    
-        await ejecutorPregunta(fraseFail, fraseFail, tipo, variable);
-    
-      }
-    
+      response = response.replace(/,/g, '.');
+      condition = !isNaN(response) && Number(response) > 0;
       break;
-
     case 'cantidad':
-
-        if(!isNaN(response) && Number.isInteger(Number(response)) && Number(response) > 0) {
-  
-          expediente = response;
-      
-         } else {
-      
-          await ejecutorPregunta(fraseFail, fraseFail, tipo);
-      
-        }
-      
-        break;
-
-    case 'tipoInt':
-
-    if(response == 'legal' || response == 'mora') {
-
-      variable.push(response);
-  
-     } else {
-  
-      await ejecutorPregunta(fraseFail, fraseFail, tipo, variable);
-  
-    }
-
+      condition = !isNaN(response) && 
+                  Number.isInteger(Number(response)) && 
+                  Number(response) > 0;
       break;
-
+    case 'tipoInt':
+      condition = response == 'legal' || response == 'mora';
+      break;
     case 'calculo':
-
-      if(response < 14 && response > 0 && Number.isInteger(Number(response))) {
-
-        calculo = response;
-    
-       } else if (!isNaN(response)) {
-    
-        await ejecutorPregunta(fraseFail, fraseFail, tipo);
-    
-      } else {
-
-        await ejecutorPregunta(fraseFail, fraseFail, tipo);
-
-      }
-    
-
+      condition = response < 14 && 
+                  response > 0 && 
+                  Number.isInteger(Number(response));
     break;
-
     case 'titulo':
-
-      if(response.length < 21) {
-
-        variable.push(response);
-    
-       } else {
-
-        await ejecutorPregunta(fraseFail, fraseFail, tipo, variable);
-
-      }
+      condition = response.length < 21;
+    break;
+    case 'isCorrect':
+      condition = response === 'si' || 
+                  response === 'sí' ||
+                  response === 'Sí' ||
+                  response === 'Si' ||
+                  response === '' ||
+                  response === 'no' ||
+                  response === 'No'
+    break;
+    case 'correction':
+      condition = 1 <= response <= 4 && 
+                  !isNaN(response) &&
+                  Number.isInteger(Number(response));
+    break;
     }
+  
+  if(condition) return response;
+  else ejecutorPregunta(tipo, fraseFail);
+  
 }
 
-
+let calculations = new Map();
 async function executionInt() {
-
-  await ejecutorPregunta('Introduce el número del expediente: ', 'El valor introducido no es una cantidad o no es un entero (no introducir símbolos ni puntos): ', 'cantidad');
-  await ejecutorPregunta('Introduce la cantidad de cálculos de intereses: ', 'No puede exceder de 13 cálculos o tener letras: ', 'calculo');
-
-  for(let i = 0; i < calculo; i++) {
-
-    console.log(`\n Cálculo nº ${i+1} \n`)
-
-    await ejecutorPregunta('Introduce el tipo de interés aplicable (legal o mora): ', 'El tipo de interés introducido no es ni legal ni mora, reintrodúzcalo: ', 'tipoInt', tipos);
-    await ejecutorPregunta('Introduce el título de la tabla: ', 'El título excede de los 20 carácteres, reintrodúzcalo: ', 'titulo', titulos);
-    await ejecutorPregunta('Introduce la fecha inicial (dd/mm/aaaa): ', 'Por favor, introduce la fecha en formato dd/mm/aaaa: ', 'fecha', fechasIniciales);
-    await ejecutorPregunta('Introduce la fecha final (dd/mm/aaaa): ', 'Por favor, introduce la fecha en formato dd/mm/aaaa: ', 'fecha', fechasFinales);
-    await ejecutorPregunta('Introduce la cantidad: ', 'El valor introducido no es una cantidad (no introducir símbolos ni puntos): ' ,'cantidadArr', cantidades);
   
+  // Acumular las respuestas
+  
+  let fileNumber = await ejecutorPregunta('cantidad', 'Introduce el número del expediente: ', 'El valor introducido no es una cantidad o no es un entero (no introducir símbolos ni puntos): ');
+  let numberCalculations = await ejecutorPregunta('calculo', 'Introduce la cantidad de cálculos de intereses: ', 'No puede exceder de 13 cálculos o tener letras: ');
+
+  for(let i = 1; i <= numberCalculations; i++) {
+
+    // Acumular en variables
+    console.log(`\n Cálculo nº ${i} \n`)
+
+    let typeInterestsRate = await ejecutorPregunta('tipoInt', 'Introduce el tipo de interés aplicable (legal o mora): ', 'El tipo de interés introducido no es ni legal ni mora, reintrodúzcalo: ');
+    let title = await ejecutorPregunta('titulo', 'Introduce el título de la tabla: ', 'El título excede de los 20 carácteres, reintrodúzcalo: ');
+    let initialDate = await ejecutorPregunta('fecha', 'Introduce la fecha inicial (dd/mm/aaaa): ', 'Por favor, introduce la fecha en formato dd/mm/aaaa: ');
+    let endDate = await ejecutorPregunta('fecha', 'Introduce la fecha final (dd/mm/aaaa): ', 'Por favor, introduce la fecha en formato dd/mm/aaaa: ');
+    let amount = await ejecutorPregunta('cantidadArr', 'Introduce la cantidad: ', 'El valor introducido no es una cantidad (no introducir símbolos ni puntos): ');
+    
+    let isCorrect = await ejecutorPregunta('isCorrect', '¿Son correctos los datos introducidos? (si/no)', 'Por favor, introduzca si o no.');
+    let isCorrectNow = false;
+    if(isCorrect === 'si' || isCorrect === '' || isCorrect === 'Sí') isCorrectNow = true;
+
+    while(!isCorrectNow) {
+        console.log(`
+        1. Tipo de tipo de interes.
+        2. Título de la tabla.
+        3. Fecha inicial de calculo.
+        4. Fecha final de calculo.
+        5. Cantidad. 
+        `);
+        let elementToCorrect = await ejecutorPregunta('correction', 'Introduce el número del elemento a modificar: ', 'El elemento seleccionado no es correcto');
+        
+        switch(Number(elementToCorrect)) {
+          case 1:
+            typeInterestsRate = await ejecutorPregunta('tipoInt', 'Introduce el tipo de interés aplicable (legal o mora): ', 'El tipo de interés introducido no es ni legal ni mora, reintrodúzcalo: ');
+            break;
+          case 2:
+            title = await ejecutorPregunta('titulo', 'Introduce el título de la tabla: ', 'El título excede de los 20 carácteres, reintrodúzcalo: ');
+            break;
+          case 3:
+            initialDate = await ejecutorPregunta('fecha', 'Introduce la fecha inicial (dd/mm/aaaa): ', 'Por favor, introduce la fecha en formato dd/mm/aaaa: ');
+            break;
+          case 4:
+            endDate = await ejecutorPregunta('fecha', 'Introduce la fecha final (dd/mm/aaaa): ', 'Por favor, introduce la fecha en formato dd/mm/aaaa: ');
+            break;
+          case 5:
+            amount = await ejecutorPregunta('cantidadArr', 'Introduce la cantidad: ', 'El valor introducido no es una cantidad (no introducir símbolos ni puntos): ');
+            break;
+        }
+        isCorrect = await ejecutorPregunta('isCorrect', '¿Son correctos los datos introducidos? (si/no) ', 'Por favor, introduzca si o no.');
+        if(isCorrect === 'si' || isCorrect === '' || isCorrect === 'Sí') isCorrectNow = true;
+    }
+
+    calculations.set(i, {typeInterestsRate, title, initialDate, endDate, amount});
   }
   
-  let contenido = HTMLFinalContent(fechasIniciales, fechasFinales, cantidades, tipos, titulos);
+  let content = HTMLFinalContent(calculations);
 
-  return htmlToDocx(contenido);
+  calculations.set('fileNumber', fileNumber);
+  
+  return content;
 
 }
 
+// Crear función asíncrona para generar el archivo y los archivos correspondientes.
+async function processContent() {
 
-executionInt()
-  .then(async (result) => {
+  try {
 
-if (!fs.existsSync(path.join(__dirname, `./expedientes`))) {
+    let content = await executionInt();
+    let result = await htmlToDocx(content);
+    let fileNumber = calculations.get('fileNumber')
+  
+    if (!fs.existsSync(path.join(__dirname, `./expedientes`))) {
+      fs.mkdirSync(path.join(__dirname, `./expedientes`));
+    }
+    
+      if (!fs.existsSync(path.join(__dirname, `./expedientes/${fileNumber}`))) { 
+        fs.mkdirSync(path.join(__dirname, `./expedientes/${fileNumber}`));
+      }
       
-  fs.mkdirSync(path.join(__dirname, `./expedientes`));
+      await fs.writeFile(path.join(__dirname + `/expedientes/${fileNumber}/${fileNumber} - ANEXO 1.docx`), result); 
+      console.log(`${fileNumber} - ANEXO 1.docx se ha guardado con éxito`);
 
-}
-
-  if (!fs.existsSync(path.join(__dirname, `./expedientes/${expediente}`))) {
-      
-    fs.mkdirSync(path.join(__dirname, `./expedientes/${expediente}`));
+      let writingToCourt = await question('¿Desea que expedir escrito de liquidación de intereses?');
+      if(writingToCourt == 'si' || writingToCourt == 'sí') {
+        generarEscrito(calculations);
+        console.log('El escrito de liquidación de intereses se ha guardado con éxito');
+      }
+      rl.close();
   
-  }
-  
-  fs.writeFileSync(path.join(__dirname + `/expedientes/${expediente}/${expediente} - ANEXO 1.docx`), result); 
-
-  console.log(`${expediente} - ANEXO 1.docx se ha guardado con éxito`);
-
-  return question('¿Desea que expedir escrito de liquidación de intereses?');
-
-})
-  .then((resp) => {
-
-  if(resp == 'si' || resp == 'sí') {
-
-    generarEscrito(fechasIniciales, fechasFinales, cantidades, tipos, titulos, expediente);
-
-    console.log('El escrito de liquidación de intereses se ha guardado con éxito');
-
-    rl.close();
-  }
-  
-  rl.close();
-
-  })
-  .catch(err => {
+  } catch(e) {
     console.log('No se ha podido realizar el cálculo, inténtelo de nuevo');
     console.log('-------------------------------------------------------\n');
-    console.log(err);
+    console.log(e);
     rl.close();
-  });
+  }
+}
 
-
-
+processContent()

@@ -4,6 +4,7 @@
   "description": "A project to make an interest calculator",
   "bin": "index.js",
   "dependencies": {
+    "dayjs": "^1.11.1",
     "docxtemplater": "^3.22.6",
     "html-to-docx": "^1.2.2",
     "nexe": "^4.0.0-beta.19",
@@ -17,7 +18,15 @@
   "author": "Elminsterio",
   "license": "ISC",
   "pkg": {
-    "scripts": ["index.js", "escritos.js", "calculadoraIntPers.js", "calculadoraLegal.js", "patternLiquidacion.js"],
-    "assets": [ "assets/**/*"]
+    "scripts": [
+      "index.js",
+      "escritos.js",
+      "calculadoraIntPers.js",
+      "calculadoraLegal.js",
+      "patternLiquidacion.js"
+    ],
+    "assets": [
+      "assets/**/*"
+    ]
   }
 }

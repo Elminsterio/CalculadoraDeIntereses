@@ -1,0 +1,39 @@
+Crear un objeto constante o un Map() que el nombre de sus keys sean los años.
+Dentro de la misma, cada año, va a tener un objeto con el tipo de interés anual y diario ya calculado.
+si en ese año hay más tipos de interés, va a ser un array y va a contener como propiedades adicionales, hasta que mes y día
+se aplica. 
+
+Estas propiedades van a ser tipo string.
+
+A la hora de iniciar el cálculo de intereses, se va a tomar en la función, día, mes y año iniciales y finales.
+De este parámetro, se tomará primero el año para crear un array que contendrá como objetos los años (y sus tipos aplicables)
+que durará el cálculo a realizar.
+
+Una vez almacenados todos los tipos aplicables y fechas en un array de objetos, vamos a hacer un bucle while condicionado a que
+la longitud del array antedicho sea mayor que 0. Si es 0 ya hemos realizado todos los cálculos.
+
+Fuera del bucle:
+
+Desesctructaremos las fechas iniciales en mesInicial, añoInicial, y díaInicial.
+Lo mismo con la fecha final.
+
+Dentro de este bucle, se van a hayar los intereses por bloques de meses y haremos cálculos sobre el primer elemento del array antedicho.
+
+Para ello, en el primer ciclo necesitaremos el día y el mes iniciales.
+Debemos analizar si la fecha final está en el mismo mes, si es así, los días de cálculo serían la diferencia entre día inicial y final.
+De otra manera, debemos hayar los días que tiene el mes inicial (con day.js) y le restamos los días ya transcurridos para tener los restantes.
+(se puede hacer con operador ternario que devuelva la cantidad de días a calcular).
+
+Aplicamos el tipo de interés diario sobre la cantidad.
+
+Almacenamos el día, mes y año inicial, el día último día del mes, el mes y el año, el tipo aplicable, y la cantidad resultante de aplicar el tipo de interés.
+(queda por decidir en que estrucura de datos).
+
+Finalmente, analizamos si el mes que estamos analizando es el último mes del año o es el último mes que se aplcia tipo de interes. (en Date es 11, averiguar cuanto es en Days)
+Si la respuesta es true, haremos un slice del año que hemos analizado.
+
+
+actualCycleDateParsed.format('DD/MM/YYYY')
+
+El siguiente ciclo será igual sólo que nos saltamos
+

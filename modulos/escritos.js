@@ -3,7 +3,7 @@ const Docxtemplater = require('docxtemplater');
 
 const fs = require('fs');
 const path = require('path');
-const calcularInteresA = require('./calculadoraLegal.js');
+const interestsCalculation = require('./legalInterestsCalculator.js');
 
 // The error object contains additional information when logged with JSON.stringify (it contains a properties object containing all suberrors).
 function replaceErrors(key, value) {
@@ -26,31 +26,29 @@ function errorHandler(error) {
             return error2.properties.explanation;
         }).join("\n");
         console.log('errorMessages', errorMessages);
-        // errorMessages is a humanly readable message looking like this:
-        // 'The tag beginning with "foobar" is unopened'
     }
     throw error;
 }
 
-function calculoTotalExpediente(fechaIniArr, FechaFinArr, cantidadArr, tipoIntArr, tituloArr) {
+function calculoTotalExpediente(calculations) {
 
     let cantTotal = 0;
     let intTotal = 0;
 
-    for(let i = 0; i < fechaIniArr.length; i++) {
+    for(let calculation of calculations) {
 
-        let calculos = calcularInteresA(fechaIniArr[i], FechaFinArr[i], cantidadArr[i], tipoIntArr[i], tituloArr[i]);
+        let resultsInterests = interestsCalculation(calculation[1].initialDate, calculation[1].endDate, calculation[1].amount, calculation[1].typeInterestsRate, calculation[1].title);
 
-        if(tipoIntArr[i] !== 'mora' || tipoIntArr.length === 1) cantTotal += calculos[calculos.length - 1][0];
-        intTotal += Number(calculos[calculos.length - 1][1]);
+        if(tipoIntArr[i] !== 'mora' || tipoIntArr.length === 1) cantTotal += resultsInterests[resultsInterests.length - 1][0];
+        intTotal += resultsInterests[resultsInterests.length - 1][1];
 
     }
 
     return [cantTotal.toFixed(2), intTotal.toFixed(2)];
 
-};
+}
 
-function generarEscrito(fechaIniArr, FechaFinArr, cantidadArr, tipoIntArr, tituloArr, expediente) {
+function generarEscrito(calculations) {
     // Load the docx file as binary content
     let content = fs
         .readFileSync(path.join(__dirname, '../assets/Intereses.docx'), 'binary');
@@ -67,7 +65,7 @@ function generarEscrito(fechaIniArr, FechaFinArr, cantidadArr, tipoIntArr, titul
     // Preestablece las variables
 
     let fecha = new Date();
-    let arrCantyIntTot = calculoTotalExpediente(fechaIniArr, FechaFinArr, cantidadArr, tipoIntArr, tituloArr);
+    let arrCantyIntTot = calculoTotalExpediente(calculations);
 
     // set the templateVariables
 
@@ -94,6 +92,6 @@ function generarEscrito(fechaIniArr, FechaFinArr, cantidadArr, tipoIntArr, titul
 
     // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
     fs.writeFileSync(path.join(process.cwd() + `/expedientes/${expediente}`, `${expediente} - LIQUIDACIÓN DE INTERESES.docx`), buf);
-};
+}
 
 module.exports = generarEscrito;
