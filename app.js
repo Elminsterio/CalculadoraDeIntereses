@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const HTMLFinalContent = require('./modulos/patternInterestsDocument.js');
-const generarEscrito = require('./modulos/writings.js');
+const spawnFile = require('./modulos/writings.js');
 const interestsCalculation = require('./modulos/legalInterestsCalculator');
 const calculationObjectPrompts = require('./utils/prompts');
 
@@ -24,12 +24,13 @@ async function executionInt() {
     
     const { typeInterestsRate, title, initialDate, endDate, amount, isCorrect, elementsToCorrect } = calculationObjectPrompts;
 
-    typeInterestsRate.prefix = `(Calculo nº ${i})`;
-    title.prefix = `(Calculo nº ${i})`;
-    initialDate.prefix = `(Calculo nº ${i})`;
-    endDate.prefix = `(Calculo nº ${i})`;
-    amount.prefix = `(Calculo nº ${i})`;
-    console.log('\n');
+    typeInterestsRate.prefix = `(Cálculo nº ${i})`;
+    title.prefix = `(Cálculo nº ${i})`;
+    initialDate.prefix = `(Cálculo nº ${i})`;
+    endDate.prefix = `(Cálculo nº ${i})`;
+    amount.prefix = `(Cálculo nº ${i})`;
+  
+    console.log(`\n► Preguntas Cálculo nº ${i}:\n`);
     let responsesCalculation = await inquirer.prompt([typeInterestsRate, title, initialDate, endDate, amount]);
     
     let answeredCorrections;
@@ -68,7 +69,6 @@ async function main() {
     let calculationsObject = await executionInt();
 
     let content = HTMLFinalContent(calculationsObject);
-    console.log(content);
     let docCalculations = await htmlToDocx(content);
 
     let fileNumber = calculationsObject.get('fileNumber');
@@ -85,14 +85,14 @@ async function main() {
       console.log(`${fileNumber} - ANEXO 1.docx se ha guardado con éxito`);
 
       const { writingToCourt } = await inquirer.prompt([calculationObjectPrompts.writingToCourt]);
-      if(writingToCourt == 'si' || writingToCourt == 'sí') {
-        generarEscrito(calculationsObject);
+      if(writingToCourt) {
+        spawnFile(calculationsObject);
         console.log('El escrito de liquidación de intereses se ha guardado con éxito');
       }
   } catch(e) {
     console.error('No se ha podido realizar el cálculo, inténtelo de nuevo');
     console.error('-------------------------------------------------------\n');
-    console.error(e);
+    console.error(e.message);
   }
 }
 

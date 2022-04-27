@@ -10,9 +10,10 @@ let calculationObjectPrompts = {
         }
     },
     numberOfCalculations: {
+        type: 'number',
         name: 'numberOfCalculations',
         message: 'Introduce la cantidad de cálculos de intereses: ',
-        validate: async (response, answer) => {
+        validate: async response => {
             if(0 < response < 14 && Number.isInteger(Number(response))) {
                 return true;
             }
@@ -22,7 +23,7 @@ let calculationObjectPrompts = {
     typeInterestsRate: {
         name: 'typeInterestsRate',
         message: 'Introduce el tipo de interés aplicable (legal o mora): ',
-        validate: async (response, answer) => {
+        validate: async response => {
             if(response === 'legal' || response === 'mora') {
                 return true;
             }
@@ -32,7 +33,7 @@ let calculationObjectPrompts = {
     title: {
         name: 'title',
         message: 'Introduce el título de la tabla: ',
-        validate: async (response, answer) => {
+        validate: async response => {
             if(response.length < 20) {
                 return true;
             }
@@ -72,10 +73,10 @@ let calculationObjectPrompts = {
     },
     isCorrect: {
         name: 'isCorrect',
-        message: '¿Son correctos los datos introducidos? (si/no)',
+        message: '¿Son correctos los datos introducidos?',
         type: 'confirm',
-        suffix: '',
-        filter: response => (response === 'si' || response === '' || response === 'Sí') ? 'Yes' : 'No'
+        default: true,
+        transform: response => (response === 'si' || response === '' || response === 'Sí') ? true : false
     },
     elementsToCorrect: {
         name: 'elementToCorrect',
@@ -102,8 +103,8 @@ let calculationObjectPrompts = {
         name: 'writingToCourt',
         message: '¿Desea expedir escrito dirigido al juzgado?',
         type: 'confirm',
-        suffix: '(si/no)',
-        filter: response => (response === 'si' || response === '' || response === 'Sí') ? 'Yes' : 'No'
+        default: false,
+        filter: response => (response === 'si' || response === '' || response === 'Sí') ? true : false
     }
 };
 

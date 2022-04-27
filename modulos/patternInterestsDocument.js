@@ -38,7 +38,7 @@ function toHTML(calculation) {
     }
     
     const finalCalculations = onlyCalculations[onlyCalculations.length - 1];  
-    console.log(onlyCalculations);
+
     tableTotalStr = ` <div><h2 style="text-align: center"> ${calculation[1].title} </h2> <br> <table>` + tableTotalStr + '</table> </div>';
     
     tableTotalStr += `<table>\
@@ -70,7 +70,7 @@ function HTMLFinalContent(calculations) {
     
         content += `<div style="page-break-after: always;"> </div>`;
     }
-    console.log(content);
+
     return content;
 
 }

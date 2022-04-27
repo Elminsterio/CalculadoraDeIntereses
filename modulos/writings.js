@@ -3,7 +3,6 @@ const Docxtemplater = require('docxtemplater');
 
 const fs = require('fs');
 const path = require('path');
-const interestsCalculation = require('./legalInterestsCalculator.js');
 
 // The error object contains additional information when logged with JSON.stringify (it contains a properties object containing all suberrors).
 function replaceErrors(key, value) {
@@ -30,25 +29,7 @@ function errorHandler(error) {
     throw error;
 }
 
-function calculoTotalExpediente(calculations) {
-
-    let cantTotal = 0;
-    let intTotal = 0;
-
-    for(let calculation of calculations) {
-
-        let resultsInterests = interestsCalculation(calculation[1].initialDate, calculation[1].endDate, calculation[1].amount, calculation[1].typeInterestsRate, calculation[1].title);
-
-        if(tipoIntArr[i] !== 'mora' || tipoIntArr.length === 1) cantTotal += resultsInterests[resultsInterests.length - 1][0];
-        intTotal += resultsInterests[resultsInterests.length - 1][1];
-
-    }
-
-    return [cantTotal.toFixed(2), intTotal.toFixed(2)];
-
-}
-
-function generarEscrito(calculations) {
+function spawnFile(calculations) {
     // Load the docx file as binary content
     let content = fs
         .readFileSync(path.join(__dirname, '../assets/Intereses.docx'), 'binary');
@@ -64,23 +45,24 @@ function generarEscrito(calculations) {
 
     // Preestablece las variables
 
-    let fecha = new Date();
-    let arrCantyIntTot = calculoTotalExpediente(calculations);
+    const date = new Date();
+    const fileNumber = calculations.get('fileNumber');
+    const { totalAmount, totalInterests } = calculations.get('finalCalculations');
 
     // set the templateVariables
 
     doc.setData({
 
-        expediente,
-        cantidad: arrCantyIntTot[0],
-        cantidadInt: arrCantyIntTot[1],
-        fechaHoy: `${fecha.getDate()}/${fecha.getMonth()}/${fecha.getFullYear()}`
+        fileNumber,
+        totalAmount,
+        totalInterests: totalInterests.toFixed(2),
+        todayDate: `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`
 
     });
 
     try {
         // render the document 
-        doc.render()
+        doc.render();
     }
     catch (error) {
         // Catch rendering errors 
@@ -91,7 +73,7 @@ function generarEscrito(calculations) {
                 .generate({type: 'nodebuffer'});
 
     // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
-    fs.writeFileSync(path.join(process.cwd() + `/expedientes/${expediente}`, `${expediente} - LIQUIDACIÓN DE INTERESES.docx`), buf);
+    fs.writeFileSync(path.join(process.cwd() + `/expedientes/${fileNumber}`, `${fileNumber} - LIQUIDACIÓN DE INTERESES.docx`), buf);
 }
 
-module.exports = generarEscrito;
+module.exports = spawnFile;
