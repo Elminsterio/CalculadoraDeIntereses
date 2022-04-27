@@ -37,10 +37,9 @@ const INTERESTS_RATE_PER_DATE = [
     {startInterestsDate: '2022',  annualInterestRate: 3.00}
 ];
 
-let interestsCalculation = (initialDate, endDate, amount, type) => {
+let interestsCalculation = ({initialDate, endDate, amount, typeInterestsRate}) => {
 
-
-    switch(type) {
+    switch(typeInterestsRate) {
 
         case 'legal':
 
@@ -128,5 +127,7 @@ let dateParserToDayJS = function(date) {
     return dayjs(`${month} ${day} ${year}`)
 
 }
+
+legalInterestsCalculation('01/07/2000', '01/09/2021', 5000)
 
 module.exports = interestsCalculation;

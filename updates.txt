@@ -37,3 +37,8 @@ actualCycleDateParsed.format('DD/MM/YYYY')
 
 El siguiente ciclo será igual sólo que nos saltamos
 
+PAra la GUI:
+
+Crear una clase que sea la pregunta.
+Otra que sea una pregunta que se repita si hay fallo.
+Otra que sean las condiciones a las que se someta la pregunta y el fallo.
