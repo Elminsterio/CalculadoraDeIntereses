@@ -23,12 +23,11 @@ let calculationObjectPrompts = {
     typeInterestsRate: {
         name: 'typeInterestsRate',
         message: 'Introduce el tipo de interés aplicable (legal o mora): ',
-        validate: async response => {
-            if(response === 'legal' || response === 'mora') {
-                return true;
-            }
-            return 'El tipo de interés introducido no es ni legal ni mora, reintrodúzcalo ';
-        }
+        type: 'list',
+        choices: [
+            'legal',
+            'mora'
+        ]
     },
     title: {
         name: 'title',
