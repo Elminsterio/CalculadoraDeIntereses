@@ -17,7 +17,7 @@ function toHTML(calculation) {
     // extraerlos aquí
 
     const onlyCalculations = calculation[1].calculation;
-    for(let i = 0; i < onlyCalculations.length - 2; i++) {
+    for(let i = 0; i < onlyCalculations.length - 1; i++) {
 
         const {startDatePeriod, 
                endDatePeriod, 

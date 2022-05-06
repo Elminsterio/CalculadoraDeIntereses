@@ -3,9 +3,9 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 const path = require('path');
 
-const HTMLFinalContent = require('./modulos/patternInterestsDocument.js');
-const spawnFile = require('./modulos/writings.js');
-const interestsCalculation = require('./modulos/legalInterestsCalculator');
+const HTMLFinalContent = require('./modules/patternInterestsDocument.js');
+const spawnFile = require('./modules/writings.js');
+const interestsCalculation = require('./modules/legalInterestsCalculator');
 const calculationObjectPrompts = require('./utils/prompts');
 
 
@@ -29,8 +29,8 @@ async function executionInt() {
     initialDate.prefix = `(Cálculo nº ${i})`;
     endDate.prefix = `(Cálculo nº ${i})`;
     amount.prefix = `(Cálculo nº ${i})`;
-  
     console.log(`\n► Preguntas Cálculo nº ${i}:\n`);
+    
     let responsesCalculation = await inquirer.prompt([typeInterestsRate, title, initialDate, endDate, amount]);
     
     let answeredCorrections;
