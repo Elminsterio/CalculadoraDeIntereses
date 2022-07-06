@@ -42,7 +42,6 @@ const INTERESTS_RATE_PER_DATE = [
 ];
 
 let interestsCalculation = ({initialDate, endDate, amount, typeInterestsRate}) => {
-
     switch(typeInterestsRate) {
 
         case 'legal':
@@ -52,16 +51,14 @@ let interestsCalculation = ({initialDate, endDate, amount, typeInterestsRate}) =
         return legalInterestsCalculation(initialDate, endDate, amount, 2);
 
         case 'personalizado':
-        return 
-    }
-
-       
+        return customInterestsCalculator(initialDate, endDate, amount, typeInterestsRate);
+    } 
 };
 
-let legalInterestsCalculation = (initialDate, endDate, amount, differential = 0) => {
+const legalInterestsCalculation = (initialDate, endDate, amount, differential = 0) => {
 
-    let initialDateParsed = completeDateParserToDayJS(initialDate);
-    let endDateParsed = completeDateParserToDayJS(endDate);
+    const initialDateParsed = completeDateParserToDayJS(initialDate);
+    const endDateParsed = completeDateParserToDayJS(endDate);
     
     let totalInterests = 0;
     const calculations = [];
@@ -99,11 +96,55 @@ let legalInterestsCalculation = (initialDate, endDate, amount, differential = 0)
     })
 
     calculations.push({ totalInterests })
-
     return calculations;
 }
 
-let completeDateParserToDayJS = function(date) {
+const customInterestsCalculator = (initialDate, endDate, amount, rate) => {
+
+    const initialDateParsed = completeDateParserToDayJS(initialDate);
+    const endDateParsed = completeDateParserToDayJS(endDate);
+    
+    let totalInterests = 0;
+    const calculations = [];
+
+    const yearsToCalculate = endDateParsed.year() - initialDateParsed.year();
+
+    for(let i = 0; yearsToCalculate >= i; i++) {
+
+        const periodDateParsed = dayjs((initialDateParsed.year() + i) + '');
+        const finalPeriodDateParsed = periodDateParsed.add(1, 'year').subtract(1, 'days');
+
+        const itsInitial = initialDateParsed.isBetween(periodDateParsed, finalPeriodDateParsed);
+        const itsLast = endDateParsed.isBetween(periodDateParsed, finalPeriodDateParsed);
+
+        let daysOnPeriod;
+        if(itsInitial && itsLast) daysOnPeriod = endDateParsed.diff(initialDateParsed, 'days');
+        else if(itsInitial) daysOnPeriod = finalPeriodDateParsed.diff(initialDateParsed, 'days');
+        else if(itsLast) daysOnPeriod = endDateParsed.diff(periodDateParsed, 'days'); 
+        else daysOnPeriod = finalPeriodDateParsed.diff(periodDateParsed, 'days');
+        daysOnPeriod++;
+
+        const totalDaysActualYear = periodDateParsed.isLeapYear() ? 366 : 365;
+        const ratePerDay = (rate / 100) / totalDaysActualYear;
+        const interestsCycle = (amount * ratePerDay * daysOnPeriod);
+        totalInterests += interestsCycle;
+
+        calculations.push({actualYearInterests: interestsCycle, 
+            daysPerInterestsCycle: daysOnPeriod, 
+            amount, 
+            annualInterestRate: rate, 
+            startDatePeriod: itsInitial ? initialDateParsed.format('DD/MM/YYYY') : periodDateParsed.format('DD/MM/YYYY'), 
+            endDatePeriod: itsLast ? endDateParsed.format('DD/MM/YYYY') : finalPeriodDateParsed.format('DD/MM/YYYY') 
+        });
+    }
+
+    calculations.push({ totalInterests })
+    return calculations;
+}
+
+console.log(customInterestsCalculator('12/01/2020', '24/02/2022', 2000, 5))
+
+function completeDateParserToDayJS(date) {
 
     const [ day, month, year ] = date.split('/');
 

@@ -26,7 +26,8 @@ let calculationObjectPrompts = {
         type: 'list',
         choices: [
             'legal',
-            'mora'
+            'mora',
+            'personalizado'
         ]
     },
     title: {
