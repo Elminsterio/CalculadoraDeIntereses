@@ -17,17 +17,6 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Elminsterio",
-  "license": "ISC",
-  "pkg": {
-    "scripts": [
-      "index.js",
-      "escritos.js",
-      "calculadoraIntPers.js",
-      "calculadoraLegal.js",
-      "patternLiquidacion.js"
-    ],
-    "assets": [
-      "assets/**/*"
-    ]
-  }
+  "license": "ISC"
 }
+
