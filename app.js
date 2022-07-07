@@ -22,7 +22,7 @@ async function executionInt() {
 
   for(let i = 1; i <= numberOfCalculations; i++) {
     
-    const { typeInterestsRate, title, initialDate, endDate, amount, isCorrect, elementsToCorrect } = calculationObjectPrompts;
+    const { typeInterestsRate, title, initialDate, endDate, amount, isCorrect, elementsToCorrect, customInterestsRate } = calculationObjectPrompts;
 
     typeInterestsRate.prefix = `(Cálculo nº ${i})`;
     title.prefix = `(Cálculo nº ${i})`;
@@ -31,8 +31,13 @@ async function executionInt() {
     amount.prefix = `(Cálculo nº ${i})`;
     console.log(`\n► Preguntas Cálculo nº ${i}:\n`);
     
-    let responsesCalculation = await inquirer.prompt([typeInterestsRate, title, initialDate, endDate, amount]);
-    
+
+    let typeOfInterests = await inquirer.prompt([typeInterestsRate]);
+
+    let responsesCalculation = typeOfInterests.typeInterestsRate === 'personalizado' ? 
+                               await inquirer.prompt([customInterestsRate, title, initialDate, endDate, amount]) :
+                               await inquirer.prompt([title, initialDate, endDate, amount])
+
     let answeredCorrections;
     let isCorrectNow = await inquirer.prompt([isCorrect]);
     while(!isCorrectNow.isCorrect) {
@@ -42,11 +47,12 @@ async function executionInt() {
         answeredCorrections = await inquirer.prompt(arrayWithElementsToCorrect);
         isCorrectNow = await inquirer.prompt([isCorrect]);
     }
-
-    responsesCalculation = {...responsesCalculation, ...answeredCorrections};
+    responsesCalculation = {...responsesCalculation, ...answeredCorrections, ...typeOfInterests};
     let calculation = interestsCalculation(responsesCalculation);
     calculations.set(i, {...responsesCalculation, calculation});
     
+    console.log(calculation, responsesCalculation)
+
     totalAmount += responsesCalculation.amount;
     totalInterests += calculation[calculation.length - 1].totalInterests;
 
@@ -92,7 +98,7 @@ async function main() {
   } catch(e) {
     console.error('No se ha podido realizar el cálculo, inténtelo de nuevo');
     console.error('-------------------------------------------------------\n');
-    console.error(e.message);
+    console.error(e);
   }
 }
 

@@ -1,11 +1,9 @@
 const dayjs = require('dayjs');
 const isBetween = require('dayjs/plugin/isBetween')
 const isLeapYear = require('dayjs/plugin/isLeapYear');
-const arraySupport = require("dayjs/plugin/arraySupport");
 
 dayjs.extend(isLeapYear);
 dayjs.extend(isBetween);
-dayjs.extend(arraySupport);
 
 const INTERESTS_RATE_PER_DATE = [
     {startInterestsDate: '1993', endInterestsDate: ['1993', '11', '31'],  annualInterestRate: 10.0},
@@ -41,7 +39,7 @@ const INTERESTS_RATE_PER_DATE = [
     {startInterestsDate: '2022', endInterestsDate: ['2022', '11', '31'],  annualInterestRate: 3.00}
 ];
 
-let interestsCalculation = ({initialDate, endDate, amount, typeInterestsRate}) => {
+let interestsCalculation = ({initialDate, endDate, amount, typeInterestsRate, customInterestsRate}) => {
     switch(typeInterestsRate) {
 
         case 'legal':
@@ -51,7 +49,7 @@ let interestsCalculation = ({initialDate, endDate, amount, typeInterestsRate}) =
         return legalInterestsCalculation(initialDate, endDate, amount, 2);
 
         case 'personalizado':
-        return customInterestsCalculator(initialDate, endDate, amount, typeInterestsRate);
+        return customInterestsCalculator(initialDate, endDate, amount, customInterestsRate);
     } 
 };
 
@@ -126,7 +124,7 @@ const customInterestsCalculator = (initialDate, endDate, amount, rate) => {
 
         const totalDaysActualYear = periodDateParsed.isLeapYear() ? 366 : 365;
         const ratePerDay = (rate / 100) / totalDaysActualYear;
-        const interestsCycle = (amount * ratePerDay * daysOnPeriod);
+        const interestsCycle = amount * (ratePerDay * daysOnPeriod);
         totalInterests += interestsCycle;
 
         calculations.push({actualYearInterests: interestsCycle, 
@@ -137,12 +135,9 @@ const customInterestsCalculator = (initialDate, endDate, amount, rate) => {
             endDatePeriod: itsLast ? endDateParsed.format('DD/MM/YYYY') : finalPeriodDateParsed.format('DD/MM/YYYY') 
         });
     }
-
     calculations.push({ totalInterests })
     return calculations;
 }
-
-console.log(customInterestsCalculator('12/01/2020', '24/02/2022', 2000, 5))
 
 function completeDateParserToDayJS(date) {
 

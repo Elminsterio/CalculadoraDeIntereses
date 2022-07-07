@@ -30,6 +30,16 @@ let calculationObjectPrompts = {
             'personalizado'
         ]
     },
+    customInterestsRate: {
+        name: 'customInterestsRate',
+        message: 'Introduce el tipo de interés: ',
+        validate: async response => {
+            if(Number(response)) {
+                return true;
+            }
+            return 'El valor introducido debe ser un número'
+        }
+    },
     title: {
         name: 'title',
         message: 'Introduce el título de la tabla: ',
@@ -83,7 +93,6 @@ let calculationObjectPrompts = {
         message: 'Introduce el elemento a modificar: ',
         type: 'checkbox',
         choices: [
-            'Tipo de interes',
             'Título de la tabla',
             'Fecha inicial de calculo',
             'Fecha final de calculo',
@@ -91,7 +100,6 @@ let calculationObjectPrompts = {
         ],
         filter: response => {
             return response.map(value => {
-                if(value === 'Tipo de interes') return 'typeInterestsRate';
                 if(value === 'Título de la tabla') return 'title';
                 if(value === 'Fecha inicial de calculo') return 'initialDate';
                 if(value === 'Fecha final de calculo') return 'endDate';
