@@ -7,7 +7,7 @@ const HTMLFinalContent = require('./modules/patternInterestsDocument.js');
 const spawnFile = require('./modules/writings.js');
 const interestsCalculation = require('./modules/legalInterestsCalculator');
 const calculationObjectPrompts = require('./utils/prompts');
-
+const downloadAndSaveInterests = require('./modules/csvParser');
 
 async function executionInt() {
   
@@ -67,10 +67,11 @@ async function executionInt() {
 }
 
 
-// Crear función asíncrona para generar el archivo y los archivos correspondientes.
+// Crear función asíncrona para generar el cálculo y los archivos correspondientes.
 async function main() {
-
   try {
+
+    await downloadAndSaveInterests();
 
     let calculationsObject = await executionInt();
 
