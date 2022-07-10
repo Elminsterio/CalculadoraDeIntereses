@@ -5,8 +5,6 @@ const isLeapYear = require('dayjs/plugin/isLeapYear');
 dayjs.extend(isLeapYear);
 dayjs.extend(isBetween);
 
-const INTERESTS_RATE_PER_DATE = require('../assets/interests.json');
-
 let interestsCalculation = ({initialDate, endDate, amount, typeInterestsRate, customInterestsRate}) => {
     switch(typeInterestsRate) {
 
@@ -22,6 +20,8 @@ let interestsCalculation = ({initialDate, endDate, amount, typeInterestsRate, cu
 };
 
 const legalInterestsCalculation = (initialDate, endDate, amount, differential = 0) => {
+
+    const INTERESTS_RATE_PER_DATE = require('../assets/interests.json');
 
     const initialDateParsed = completeDateParserToDayJS(initialDate);
     const endDateParsed = completeDateParserToDayJS(endDate);
