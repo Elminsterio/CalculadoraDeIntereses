@@ -37,14 +37,14 @@ class BasicCSVParser {
       if(columns[0] === 'DESCRIPCIï¿½N DE LA SERIE') rateTargetIndex = columns.findIndex(col => col.toLocaleLowerCase()
                                                                                                    .includes(rateName));
     
-      const isValidPeriod = this.monthsRegex.test(columns[0]);
-      if(!isValidPeriod) return;
-    
+      const isValidPeriodDate = this.monthsRegex.test(columns[0]);
+      const rateLegalInterests = parseFloat(columns[rateTargetIndex]);
+      if(!isValidPeriodDate || !rateLegalInterests) return;
+
       const date = columns[0].replace(this.monthsRegex, '$1').split(' ');
       const year = Number(date[1]);
       const month = this.monthsOnString.indexOf(date[0]) + 1;
-      const rateLegalInterests = parseFloat(columns[rateTargetIndex]);
-    
+      
       const isFirstPeriod = !pastRate && !pastMonth && !pastYear;
       if(isFirstPeriod) {
         pastRate = rateLegalInterests;
@@ -92,7 +92,8 @@ module.exports = async function downloadAndSaveInterests() {
     const fileName = await getInterestsCSV();
     console.log('%cDescargada base de datos actualizada con éxito...', 'font-weight: bold;')
     const legal = new BasicCSVParser(fileName);
-    await legal.start('legal').save('./assets/interests.json');
+    await legal.start('12 meses').save('./assets/euribor.json');
+    // await legal.start('legal').save('./assets/interests.json');
     console.log('%cActualizada la base de datos con éxito...', 'font-weight: bold;')
   } catch(error) {
     return error

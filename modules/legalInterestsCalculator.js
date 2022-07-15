@@ -19,7 +19,7 @@ let interestsCalculation = ({initialDate, endDate, amount, typeInterestsRate, cu
     } 
 };
 
-const legalInterestsCalculation = (initialDate, endDate, amount, differential = 0) => {
+const legalInterestsCalculation = (initialDate, endDate, amount, diferential = 0) => {
 
     const INTERESTS_RATE_PER_DATE = require('../assets/interests.json');
 
@@ -48,7 +48,7 @@ const legalInterestsCalculation = (initialDate, endDate, amount, differential = 
         daysOnPeriod++;
 
         const totalDaysActualYear = periodDateParsed.isLeapYear() ? 366 : 365;
-        const ratePerDay = ((period.annualInterestRate + differential) / 100) / totalDaysActualYear;
+        const ratePerDay = ((period.annualInterestRate + diferential) / 100) / totalDaysActualYear;
         const interestsCycle = (amount * ratePerDay * daysOnPeriod);
         totalInterests += interestsCycle;
 
