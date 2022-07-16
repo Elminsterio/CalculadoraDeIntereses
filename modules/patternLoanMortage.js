@@ -14,7 +14,8 @@ function toHTML(calculations) {
                   <th> Intereses sin suelo </th>
                   <th> Principal sin suelo </th>
                   <th> Capital restante </th>
-                  <th> Tipo de interés sin suelo </th>`
+                  <th> Tipo de interés sin suelo </th>
+                  <th> Diferencia intereses </th>`
 
   tableTotalStr += tableStr;
   tableTotalStr += '</tr>'
@@ -22,11 +23,10 @@ function toHTML(calculations) {
   const { amortizationWithoutFloor, amortizationWithFloor, diferences } = calculations;
   
   for(let i = 0; i < amortizationWithoutFloor.length - 1; i++) {    
-
     const {actualRate, monthTotal, monthPrincipal, monthInterests,
-           remainQuantity, initialDate } = amortizationWithFloor[i];
+           remainQuantity, initialDate, monthDiferenceInterests } = amortizationWithFloor[i];
     const {actualRate: rateWithoutFloor, monthTotal: monthWithoutFloor, monthPrincipal: monthPrincipalWithoutFloor, 
-           monthInterests: monthInterestsWithoutFloor, remainQuantity: remainQuantityWithoutFloor} = amortizationWithoutFloor[i];
+           monthInterests: monthInterestsWithoutFloor, remainQuantity: remainQuantityWithoutFloor } = amortizationWithoutFloor[i];
 
     tableTotalStr += '<tr>';
 
@@ -40,11 +40,11 @@ function toHTML(calculations) {
                     <td>${monthInterestsWithoutFloor.toFixed(2)}</td>
                     <td>${monthPrincipalWithoutFloor.toFixed(2)}</td>
                     <td>${remainQuantityWithoutFloor.toFixed(2)}</td>
-                    <td>${rateWithoutFloor.toFixed(2)}</td>`
+                    <td>${rateWithoutFloor.toFixed(2)}</td>
+                    <td>${monthDiferenceInterests.toFixed(2)}</td>`
 
     tableTotalStr += tableStr;
     tableTotalStr += '</tr> ';
-      
   }
   
   tableTotalStr = ` <div><table>` + tableTotalStr + '</table></div>';

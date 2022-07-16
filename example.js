@@ -8,7 +8,7 @@ const path = require('path');
 async function main() {
   try {
     console.time('ex')
-    let calculationsObject = loanWithoutFloor(180000, '02/01/1999', '15/02/2020', 180, 4, 0, 1.5);
+    let calculationsObject = loanWithoutFloor(120000, '01/01/2001', '15/02/2015', 180, 3.25, 0, 1.25);
     console.timeEnd('ex')
 
     let content = toHTML(calculationsObject);

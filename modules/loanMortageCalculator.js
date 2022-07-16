@@ -32,7 +32,7 @@ function mortageLoan(quantity, initialDate, totalNumMonths, freezeMonthsPeriod =
                                     ((1 + actualMonthlyRate) ** totalNumMonths - 1);
       const monthInterests = actualMonthlyRate * remainQuantity;
       const monthPrincipal = monthTotal - monthInterests;
-      // TODO: en freeze period avoid interests 
+      // TODO: en freeze period avoid principal and other measures 
       if(freezeMonthsPeriod <= i) remainQuantity = remainQuantity - monthPrincipal;
 
       calculations.push({
@@ -49,25 +49,26 @@ function mortageLoan(quantity, initialDate, totalNumMonths, freezeMonthsPeriod =
 }
 
 function loanWithoutFloor(quantity, initialDate, finalDate, totalNumMonths, floor, freezeMonthsPeriod = 0, diferential = 0) {
-  // TODO: Set next month not
-  const amortizationWithoutFloor = mortageLoan(quantity, initialDate, totalNumMonths, freezeMonthsPeriod, diferential, 0)
-      .filter(({initialDate}) => completeDateParserToDayJS(initialDate) < completeDateParserToDayJS(finalDate));
+  // TODO: Make sostenible estructure
   const amortizationWithFloor = mortageLoan(quantity, initialDate, totalNumMonths, freezeMonthsPeriod, diferential, floor)
       .filter(({initialDate}) => completeDateParserToDayJS(initialDate) < completeDateParserToDayJS(finalDate));
+  const amortizationWithoutFloor = mortageLoan(quantity, initialDate, totalNumMonths, freezeMonthsPeriod, diferential, 0)
+      .filter(({initialDate}) => completeDateParserToDayJS(initialDate) < completeDateParserToDayJS(finalDate));
 
-  const diferences = amortizationWithoutFloor.reduce((acc, currentPeriod, index) => {
-      const { monthInterests, monthPrincipal } = currentPeriod;
+  const diferenceInterests = amortizationWithoutFloor.reduce((acc, currentPeriod, index) => {
+      const { monthInterests } = currentPeriod;
       const monthInterestsWithFloor = amortizationWithFloor[index].monthInterests;
-      const monthPrincipalsWithFloor = amortizationWithFloor[index].monthPrincipal;
 
       amortizationWithFloor[index]['monthDiferenceInterests'] = monthInterestsWithFloor - monthInterests;
-      amortizationWithFloor[index]['monthDiferencePrincipal'] = monthPrincipalsWithFloor - monthPrincipal;
+      acc += monthInterestsWithFloor - monthInterests;
 
-      acc.diferenceInterests += monthInterestsWithFloor - monthInterests;
-      acc.diferencePrincipal += monthPrincipalsWithFloor - monthPrincipal;
       return acc;
-  }, {diferenceInterests: 0, diferencePrincipal: 0});
+  }, 0);
 
+  const diferencePrincipal = amortizationWithFloor[amortizationWithFloor.length - 1].remainQuantity - 
+                              amortizationWithoutFloor[amortizationWithoutFloor.length - 1].remainQuantity;
+
+  const diferences = {diferenceInterests, diferencePrincipal}
   return {amortizationWithoutFloor, amortizationWithFloor, diferences};
 }
 
@@ -78,7 +79,7 @@ function getRevisionInterests(initialDate, totalNumPeriods, indexPeriods) {
   return indexPeriods.filter(({ startInterestsDate, endInterestsDate }) => {
       const initialRateDate = dayjs(startInterestsDate);
       const endRateDate = dayjs(endInterestsDate);
-      return initialRateDate.month() <= initialMonth && initialMonth <= endRateDate.month() && initialRateDate.year() >= initialYear
+      return initialRateDate.month() <= initialMonth && initialMonth <= endRateDate.month() && initialRateDate.year() >= initialYear;
   })
 }
 
